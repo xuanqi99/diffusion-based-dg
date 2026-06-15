@@ -34,6 +34,48 @@ The main idea is:
 6. Evaluate whether the generated data improves performance on unseen target
    domains.
 
+## MIRO DG Method
+
+This repository also includes a PyTorch implementation of MIRO (Mutual
+Information Regularization with Oracle), a domain generalization method that
+uses a frozen pre-trained model as an oracle approximation. During supervised
+training on source domains, MIRO adds a feature-level regularization term that
+keeps the trainable model close to the oracle representation and reduces
+overfitting to source-domain-specific cues.
+
+The implementation is provided in [`miro.py`](miro.py). It is framework-light
+and can wrap any `torch.nn.Module` whose intermediate layers can be addressed by
+`named_modules()`.
+
+Minimal usage:
+
+```python
+import copy
+import torch
+
+from miro import MIROTrainer, miro_step
+
+student = build_model(num_classes=num_classes)
+oracle = copy.deepcopy(student)  # usually the original pre-trained checkpoint
+
+trainer = MIROTrainer(
+    student=student,
+    oracle=oracle,
+    feature_layers=("layer1", "layer2", "layer3", "layer4"),
+    lambda_miro=0.01,
+)
+
+optimizer = torch.optim.Adam(trainer.parameters(), lr=3e-5, weight_decay=0.0)
+
+for images, labels in source_loader:
+    output = miro_step(trainer, optimizer, images, labels)
+    print(output.total_loss.item(), output.task_loss.item(), output.miro_loss.item())
+```
+
+For ResNet-style models, common feature layers are `layer1` through `layer4`.
+For custom backbones, use `named_modules_containing(model, tokens)` from
+`miro.py` to inspect candidate layer names.
+
 ## Motivation
 
 Diffusion models provide strong generative quality and can model complex visual
@@ -51,3 +93,9 @@ changes and therefore perform better on unknown target domains.
 This project is intended for research on diffusion-based data augmentation for
 domain generalization, especially scenarios where synthetic unknown-domain data
 can help improve model performance under distribution shift.
+
+## References
+
+- Cha, J., Lee, K., Park, S., and Chun, S. "Domain Generalization by
+  Mutual-Information Regularization with Pre-trained Models." ECCV 2022.
+- Official MIRO implementation: https://github.com/khanrc/miro
