@@ -34,6 +34,59 @@ The main idea is:
 6. Evaluate whether the generated data improves performance on unseen target
    domains.
 
+## CDGA DG Method
+
+This repository includes a Python implementation of CDGA (Cross Domain
+Generative Augmentation), a diffusion-based domain generalization method that
+generates synthetic samples in the vicinity of source-domain pairs. CDGA first
+creates cross-domain images with a latent diffusion model and then trains the
+recognition model with standard ERM on both original and generated data.
+
+The implementation is provided in [`cdga.py`](cdga.py). It supports:
+
+- scanning ImageFolder-style datasets organized as `domain/class/image`;
+- prompt-guided CDGA generation jobs, where the target domain is represented by
+  a text prompt;
+- image-guided CDGA generation jobs, where a same-class image from another
+  domain is used as guidance;
+- DomainBed-style dataset construction from generated CDGA folders.
+
+Minimal prompt-guided usage:
+
+```python
+from diffusers import StableDiffusionImg2ImgPipeline
+
+from cdga import CDGAPromptBuilder, CDGAPlanner, make_diffusers_img2img_generator
+
+pipe = StableDiffusionImg2ImgPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
+pipe = pipe.to("cuda")
+
+planner = CDGAPlanner(
+    dataset_root="data/PACS",
+    output_root="data/PACS_CDGA",
+    prompt_builder=CDGAPromptBuilder.from_dataset("PACS"),
+    generation_batch_size=1,
+    include_self_domain=False,
+)
+
+jobs = planner.prompt_guided_jobs()
+generator = make_diffusers_img2img_generator(pipe, strength=0.75)
+planner.copy_original_domains()
+planner.run_prompt_guided(jobs, generator)
+```
+
+After generation, the resulting folder can be loaded for ERM training:
+
+```python
+from cdga import build_cdga_imagefolder_datasets
+
+datasets = build_cdga_imagefolder_datasets(
+    cdga_root="data/PACS_CDGA",
+    test_domains=["S"],
+    augment=True,
+)
+```
+
 ## MIRO DG Method
 
 This repository also includes a PyTorch implementation of MIRO (Mutual
@@ -96,6 +149,9 @@ can help improve model performance under distribution shift.
 
 ## References
 
+- Hemati, S., Beitollahi, M., Estiri, A. H., Al Omari, B., Chen, X., and
+  Zhang, G. "Cross Domain Generative Augmentation: Domain Generalization with
+  Latent Diffusion Models." arXiv:2312.05387, 2023.
 - Cha, J., Lee, K., Park, S., and Chun, S. "Domain Generalization by
   Mutual-Information Regularization with Pre-trained Models." ECCV 2022.
 - Official MIRO implementation: https://github.com/khanrc/miro
