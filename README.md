@@ -34,6 +34,40 @@ The main idea is:
 6. Evaluate whether the generated data improves performance on unseen target
    domains.
 
+## ERM DG Method
+
+This repository includes a PyTorch implementation of Empirical Risk
+Minimization (ERM), the standard baseline for domain generalization. ERM pools
+labeled minibatches from all available source domains and minimizes the regular
+supervised classification loss without using target-domain data.
+
+The implementation is provided in [`erm.py`](erm.py). It supports both a single
+training batch and a sequence of source-domain minibatches.
+
+Minimal multi-domain usage:
+
+```python
+import torch
+
+from erm import ERMTrainer, erm_step
+
+model = build_model(num_classes=num_classes)
+trainer = ERMTrainer(model)
+optimizer = torch.optim.Adam(trainer.parameters(), lr=3e-5)
+
+for source_minibatches in train_iterator:
+    output = erm_step(
+        trainer,
+        optimizer,
+        minibatches=source_minibatches,
+    )
+    print(output.loss.item(), output.accuracy.item())
+```
+
+Each item in `source_minibatches` must be an `(inputs, targets)` tuple. ERM
+concatenates the domain batches before computing cross entropy, matching the
+usual pooled-source DG baseline.
+
 ## CDGA DG Method
 
 This repository includes a Python implementation of CDGA (Cross Domain
