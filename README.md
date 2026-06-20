@@ -68,6 +68,46 @@ Each item in `source_minibatches` must be an `(inputs, targets)` tuple. ERM
 concatenates the domain batches before computing cross entropy, matching the
 usual pooled-source DG baseline.
 
+## SAGM DG Method
+
+This repository includes a PyTorch implementation of SAGM (Sharpness-Aware
+Gradient Matching), a domain generalization method that jointly encourages low
+empirical risk, local parameter-space flatness, and a small gap between the
+original and perturbed losses.
+
+The implementation is provided in [`sagm.py`](sagm.py). Each optimization step
+uses two forward/backward passes: one at the current parameters and one at a
+gradient-dependent perturbation. BatchNorm running statistics are frozen during
+the perturbed pass.
+
+Minimal multi-domain usage:
+
+```python
+from sagm import SAGMTrainer, build_sagm_optimizer, sagm_step
+
+model = build_model(num_classes=num_classes)
+trainer = SAGMTrainer(model)
+optimizer = build_sagm_optimizer(
+    trainer,
+    lr=3e-5,
+    weight_decay=1e-4,
+    rho=0.05,
+    alpha=0.001,
+)
+
+for source_minibatches in train_iterator:
+    output = sagm_step(
+        trainer,
+        optimizer,
+        minibatches=source_minibatches,
+    )
+    print(output.loss.item(), output.perturbed_loss.item(), output.accuracy.item())
+```
+
+The official SAGM experiments use `rho=0.05` and tune `alpha` by dataset. A
+`LinearRhoScheduler` is also available when a changing perturbation radius is
+desired.
+
 ## CDGA DG Method
 
 This repository includes a Python implementation of CDGA (Cross Domain
@@ -183,6 +223,9 @@ can help improve model performance under distribution shift.
 
 ## References
 
+- Wang, P., Zhang, Z., Lei, Z., and Zhang, L. "Sharpness-Aware Gradient
+  Matching for Domain Generalization." CVPR 2023.
+- Official SAGM implementation: https://github.com/Wang-pengfei/SAGM
 - Hemati, S., Beitollahi, M., Estiri, A. H., Al Omari, B., Chen, X., and
   Zhang, G. "Cross Domain Generative Augmentation: Domain Generalization with
   Latent Diffusion Models." arXiv:2312.05387, 2023.
