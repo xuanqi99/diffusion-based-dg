@@ -16,6 +16,7 @@ from torch import Tensor, nn
 from torch.nn.modules.batchnorm import _BatchNorm
 
 from erm import ERMTrainer, Minibatch, combine_source_minibatches
+from erm import ERMTrainer, Minibatch, combine_source_minibatches
 
 
 RhoSchedule = Callable[[int], float]
