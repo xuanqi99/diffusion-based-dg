@@ -4,6 +4,12 @@ This repository contains a method for domain generalization based on diffusion
 generative models. The goal is to improve model robustness on unseen target
 domains without assuming access to target-domain data during training.
 
+# Diffusion-Based Domain Generalization
+
+This repository contains a method for domain generalization based on diffusion
+generative models. The goal is to improve model robustness on unseen target
+domains without assuming access to target-domain data during training.
+
 ## Overview
 
 Domain generalization aims to train a model that can perform well on unseen or
