@@ -176,35 +176,3 @@ def evaluate_erm(
         "loss": loss_sum / sample_count,
         "accuracy": correct / sample_count,
     }
-
-def evaluate_erm(
-    trainer: ERMTrainer,
-    batches: Iterable[Minibatch],
-    *,
-    device: torch.device | str | None = None,
-) -> dict[str, float]:
-    """Return sample-weighted mean loss and accuracy for a data loader."""
-
-    trainer.eval()
-    loss_sum = 0.0
-    correct = 0
-    sample_count = 0
-
-    for inputs, targets in batches:
-        if device is not None:
-            inputs = inputs.to(device)
-            targets = targets.to(device)
-
-        logits = trainer(inputs)
-        batch_size = targets.shape[0]
-        loss_sum += F.cross_entropy(logits, targets, reduction="sum").item()
-        correct += logits.argmax(dim=1).eq(targets).sum().item()
-        sample_count += batch_size
-
-    if sample_count == 0:
-        raise ValueError("batches did not yield any examples.")
-    return {
-        "loss": loss_sum / sample_count,
-        "accuracy": correct / sample_count,
-    }
-
