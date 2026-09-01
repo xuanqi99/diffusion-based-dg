@@ -221,6 +221,12 @@ This project is intended for research on diffusion-based data augmentation for
 domain generalization, especially scenarios where synthetic unknown-domain data
 can help improve model performance under distribution shift.
 
+## Intended Use
+
+This project is intended for research on diffusion-based data augmentation for
+domain generalization, especially scenarios where synthetic unknown-domain data
+can help improve model performance under distribution shift.
+
 ## References
 
 - Wang, P., Zhang, Z., Lei, Z., and Zhang, L. "Sharpness-Aware Gradient
