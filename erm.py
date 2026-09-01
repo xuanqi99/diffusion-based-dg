@@ -14,8 +14,6 @@ from typing import Callable, Iterable, Mapping, Sequence
 import torch
 from torch import Tensor, nn
 import torch.nn.functional as F
-import torch.nn.functional as F
-import torch.nn.functional as F
 
 
 LossFn = Callable[[Tensor, Tensor], Tensor]
