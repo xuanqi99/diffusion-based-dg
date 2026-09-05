@@ -22,6 +22,7 @@ from typing import Callable, Iterable, Mapping, Sequence
 from typing import Callable, Iterable, Mapping, Sequence
 from typing import Callable, Iterable, Mapping, Sequence
 from typing import Callable, Iterable, Mapping, Sequence
+from typing import Callable, Iterable, Mapping, Sequence
 
 
 IMAGE_EXTENSIONS = {".bmp", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".webp"}
