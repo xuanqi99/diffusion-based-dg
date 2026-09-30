@@ -25,6 +25,7 @@ from erm import ERMTrainer, Minibatch, combine_source_minibatches
 from erm import ERMTrainer, Minibatch, combine_source_minibatches
 from erm import ERMTrainer, Minibatch, combine_source_minibatches
 from erm import ERMTrainer, Minibatch, combine_source_minibatches
+from erm import ERMTrainer, Minibatch, combine_source_minibatches
 
 RhoSchedule = Callable[[int], float]
 OptimizerType = Type[torch.optim.Optimizer]
