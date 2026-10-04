@@ -2,6 +2,7 @@
 """Sharpness-Aware Gradient Matching for domain generalization.
 """Sharpness-Aware Gradient Matching for domain generalization.
 """Sharpness-Aware Gradient Matching for domain generalization.
+"""Sharpness-Aware Gradient Matching for domain generalization.
 SAGM augments pooled-source ERM with a second forward/backward pass at a
 gradient-dependent parameter perturbation. The final update averages the
 original and perturbed gradients, encouraging low empirical risk, local
