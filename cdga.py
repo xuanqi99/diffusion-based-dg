@@ -1,6 +1,4 @@
 """Utilities for Cross Domain Generative Augmentation (CDGA).
-"""Utilities for Cross Domain Generative Augmentation (CDGA).
-"""Utilities for Cross Domain Generative Augmentation (CDGA).
 
 CDGA is an offline data augmentation strategy for domain generalization. For
 each source-domain image, a latent diffusion model generates synthetic images
